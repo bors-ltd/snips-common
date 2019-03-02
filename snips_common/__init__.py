@@ -51,4 +51,5 @@ class ActionWrapper:
     def end_session(self, message, *args):
         current_session_id = self.intent_message.session_id
         message = message + " " + " ".join(args)
+        print('Ending session with message "%s"' % message)
         self.hermes.publish_end_session(current_session_id, message)
