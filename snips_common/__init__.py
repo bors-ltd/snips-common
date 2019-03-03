@@ -7,6 +7,7 @@ __version__ = get_distribution('snips-common').version
 
 
 def french_number(number, digits=2):
+    """Fix the pronunciation of numbers in French."""
     number = float(number)
     if int(number) == number:
         number = int(number)
@@ -14,6 +15,30 @@ def french_number(number, digits=2):
         # TODO keep meaningful zeros, e.g. 0.000001
         number = round(number, digits)
     return str(number).replace(".", ",")
+
+
+def french_duration(duration_slot):
+    """Express the duration heard by Snips as a sentence."""
+    # TODO precision field?
+    sentence = []
+    for unit, word in [
+        ('years', "ans"),
+        ('quarters', "trimestres"),
+        ('months', "mois"),
+        ('weeks', "semaines"),
+        ('days', "jours"),
+        ('hours', "heures"),
+        ('minutes', "minutes"),
+        ('seconds', "secondes"),
+    ]:
+        value = getattr(duration_slot, unit, None)
+        if value:
+            sentence.append(str(value))
+            sentence.append(word)
+
+    if not sentence:
+        return ""
+    return " ".join(sentence)
 
 
 class ActionWrapper:
