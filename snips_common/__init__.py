@@ -37,7 +37,7 @@ def french_duration(duration_slot):
                 value = "une"
             else:
                 value = str(value)
-            sentence.append()
+            sentence.append(value)
             sentence.append(word)
 
     if not sentence:
