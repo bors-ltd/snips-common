@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import datetime
 from pkg_resources import get_distribution
 import traceback
 
@@ -15,6 +16,24 @@ def french_number(number, digits=2):
         # TODO keep meaningful zeros, e.g. 0.000001
         number = round(number, digits)
     return str(number).replace(".", ",")
+
+
+def duration_to_timedelta(duration_slot):
+    """Convert a Snips duration slot to a Python timedelta object
+
+    Should already be in the Duration API!
+    """
+    if duration_slot.years or duration_slot.quarters or duration_slot.months:
+        # I should find a higher-level package on PyPI
+        raise NotImplementedError
+
+    return datetime.timedelta(
+        days=duration_slot.days,
+        seconds=duration_slot.seconds,
+        minutes=duration_slot.minutes,
+        hours=duration_slot.hours,
+        weeks=duration_slot.weeks,
+    )
 
 
 def french_duration(duration_slot):
