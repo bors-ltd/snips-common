@@ -33,7 +33,11 @@ def french_duration(duration_slot):
     ]:
         value = getattr(duration_slot, unit, None)
         if value:
-            sentence.append(str(value))
+            if value == 1 and word in ('semaines', 'heures', 'minutes', 'secondes'):
+                value = "une"
+            else:
+                value = str(value)
+            sentence.append()
             sentence.append(word)
 
     if not sentence:
