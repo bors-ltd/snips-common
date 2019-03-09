@@ -5,6 +5,8 @@ import traceback
 
 from hermes_python.ontology.dialogue import DurationValue
 
+from . import configs
+
 
 __version__ = get_distribution('snips-common').version
 
@@ -92,11 +94,13 @@ def french_timedelta(delta):
 
 
 class ActionWrapper:
+    config_parser = configs.SnipsConfigParser
     reactions = {}
 
-    def __init__(self, hermes, intent_message):
+    def __init__(self, hermes, intent_message, config):
         self.hermes = hermes
         self.intent_message = intent_message
+        self.config = config
 
     @classmethod
     def callback(cls, hermes, intent_message):
@@ -106,7 +110,8 @@ class ActionWrapper:
             "for intent",
             intent_message.intent.intent_name,
         )
-        action_wrapper = cls(hermes, intent_message)
+        config = cls.config_parser.read_configuration_file()
+        action_wrapper = cls(hermes, intent_message, config)
         try:
             action_wrapper.action()
         except Exception as exc:
@@ -115,11 +120,19 @@ class ActionWrapper:
         else:
             print("Action finished without error")
 
+    def message_for_this_site(self):
+        match = self.intent_message.site_id == self.config['secret']['site_id']
+        if not match:
+            print("This message is not for us, ignoring.")
+        return match
+
     def action(self):
         raise NotImplementedError
 
     def react_to_exception(self, exc):
-        reaction = self.reactions.get(exc.__class__, "Désolée, il y a eu une erreur.")
+        reaction = self.reactions.get(
+            exc.__class__, "Désolée, il y a eu une erreur."
+        )
         reaction = reaction.format(exc)
         self.end_session(reaction)
 
