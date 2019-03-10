@@ -3,6 +3,7 @@ import datetime
 from pkg_resources import get_distribution
 import traceback
 
+import babel.numbers
 from hermes_python.ontology.dialogue import DurationValue
 
 from . import configs
@@ -12,14 +13,21 @@ __version__ = get_distribution('snips-common').version
 
 
 def french_number(number, digits=2):
-    """Fix the pronunciation of numbers in French."""
+    """Optimize the pronunciation of numbers for picoTTS."""
     number = float(number)
     if int(number) == number:
+        # Remove useless zeroes
         number = int(number)
     else:
-        # TODO keep meaningful zeros, e.g. 0.000001
+        # Increase precision to keep meaningful zeros, e.g. 0.000001
+        while round(number, digits) == int(number):
+            digits += 1
+            if digits > 15:
+                # 1.0000000000000001 become 1.0 anyway
+                break
         number = round(number, digits)
-    return str(number).replace(".", ",")
+
+    return babel.numbers.format_decimal(number, locale='fr_FR', decimal_quantization=False)
 
 
 def duration_to_timedelta(duration_slot):
