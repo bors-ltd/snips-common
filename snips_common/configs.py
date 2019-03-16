@@ -14,7 +14,7 @@ class SnipsConfigParser(configparser.ConfigParser):
         }
 
     def defaults(self):
-        return {'secret': {'site_id': 'default'}}
+        return {}
 
     @classmethod
     def read_configuration_file(cls):

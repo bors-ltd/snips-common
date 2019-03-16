@@ -117,8 +117,14 @@ class ActionWrapper:
             cls.__name__,
             "for intent",
             intent_message.intent.intent_name,
+            "for site",
+            intent_message.site_id
         )
         config = cls.config_parser.read_configuration_file()
+
+        if not cls.message_for_this_site(config, intent_message):
+            return
+
         action_wrapper = cls(hermes, intent_message, config)
         try:
             action_wrapper.action()
@@ -128,11 +134,16 @@ class ActionWrapper:
         else:
             print("Action finished without error")
 
-    def message_for_this_site(self):
-        match = self.intent_message.site_id == self.config['secret']['site_id']
-        if not match:
-            print("This message is not for us, ignoring.")
-        return match
+    @staticmethod
+    def message_for_this_site(config, intent_message):
+        site_id = config.get('secret', {}).get('site_id')
+        if site_id:
+            deliver_to = intent_message.site_id
+            if deliver_to != site_id:
+                print("This message is for", deliver_to, ", ignoring.")
+                return False
+        # We are the recipient or the app is not designed for multiroom
+        return True
 
     def action(self):
         raise NotImplementedError
