@@ -37,11 +37,8 @@ def french_duration(duration_slot):
         ('minutes', "une minute", "{} minutes"),
         ('seconds', "une seconde", "{} secondes"),
     ]:
-        try:
-            value = getattr(duration_slot, name)
-        except AttributeError:
-            pass
-        else:
+        value = getattr(duration_slot, name, None)
+        if value:
             sentence.append(singular if value == 1 else plural.format(value))
 
     return " ".join(sentence)
