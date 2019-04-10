@@ -1,9 +1,7 @@
-import datetime
-
 import babel.numbers
-from hermes_python.ontology.dialogue import DurationValue
 
 from .utils import timedelta_to_duration
+
 
 def french_number(number, digits=2):
     """Optimize the pronunciation of numbers for picoTTS."""

@@ -1,5 +1,7 @@
 import datetime
 
+from hermes_python.ontology.dialogue import DurationValue
+
 
 def duration_to_timedelta(duration_slot):
     """Convert a Snips duration slot to a Python timedelta object."""
@@ -18,7 +20,7 @@ def duration_to_timedelta(duration_slot):
 
 def timedelta_to_duration(delta):
     """Convert a Python timedelta object to a Snips duration slot."""
-    duration_slot = DurationValue(0, 0, 0, 0, 0, 0, 0, 0, precision=1)
+    duration_slot = DurationValue()
 
     duration_slot.seconds = int(delta.total_seconds())
     if duration_slot.seconds >= 60:
